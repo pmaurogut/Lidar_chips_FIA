@@ -34,8 +34,6 @@ make_folders_project_plot<-function(x){
 			})
 }
 
-
-
 #make path to plots shapefiles
 plots_bbox<-paste(FOLDER,"BBOX","BBOX_ALL.gpkg",sep="/")
 states<-unique(st_read(plots_bbox)$STATECD)
@@ -105,7 +103,7 @@ combinations_directories<-ddply(combinations[!combinations$state=="ALL",],c("ind
 			res<-st_sf(res)
 			
 			success<-try({
-						st_write(intersects_projects,x$dest_file[1], delete_layer = TRUE)		
+						st_write(intersects,x$dest_file[1], delete_layer = TRUE)		
 					})
 			x$lidar_plots<-dim(res)[1]
 			x$lidar_plots_folder_failed<-sum(is.na(res$lidar_plot_folder))

@@ -79,3 +79,5 @@ For a given intersection lidar collection x plot location we have three subfolde
                 -   Metrics (To store the lidar metrics)
 
 The geopackages with the intersects store the path of each intersection lidar_acquisition x XY plot location. There are still some things to do. the intersections are not bounding boxes. The idea is to substitute the geometry of the intersection for a 2 km by 2 Km bounding box so they intersections have the geometry that will be used to clip the lidar. But this is not critical this is somthing that USGSlidar package can do.
+
+There is a function that is not used yet called add_intersect_fields. This is a good place to implement some of the suggestions from Demetrios. It is not used.

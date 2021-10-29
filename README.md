@@ -22,7 +22,7 @@ Inside the STATES folder there is a folder with the state number for each state.
 
         -   BBOX
 
-        -   INTERSECTED_INDEX
+        -   INTERSECTED_INDEXES
 
         -   PLOTS_LIDAR
 
@@ -30,7 +30,7 @@ Inside the STATES folder there is a folder with the state number for each state.
 
         -   BBOX
 
-        -   INTERSECTED_INDEX
+        -   INTERSECTED_INDEXES
 
         -   PLOTS_LIDAR
 
@@ -42,7 +42,7 @@ In the PLOTS_LIDAR folder there is one folder named STATECD_UNITCD_COUNTYCD_PLOT
 
 For a given intersection lidar collection x plot location we have three subfolders
 
--   1 (For state 1)
+-   12 (For state 12)
 
     -   BBOX
 
@@ -50,17 +50,9 @@ For a given intersection lidar collection x plot location we have three subfolde
 
     -   PLOTS_LIDAR
 
-        -   1_1\_1_1
+        -   12_1\_1_1
 
-            -   lidar_project_1
-
-                -   PC (to download the Point cloud)
-
-                -   DTM (to store the DTM
-
-                -   Metrics (To store the lidar metrics)
-
-            -   lidar_project_3
+            -   FL_SuwanneeRiver_North_2011
 
                 -   PC (to download the Point cloud)
 
@@ -68,9 +60,17 @@ For a given intersection lidar collection x plot location we have three subfolde
 
                 -   Metrics (To store the lidar metrics)
 
-        -   1_1\_1_2
+            -   USGS_LPC_FL_SuwanneeRiver_2017_LAS_2018
 
-            -   lidar_project_1
+                -   PC (to download the Point cloud)
+
+                -   DTM (to store the DTM
+
+                -   Metrics (To store the lidar metrics)
+
+        -   12_1\_1_2
+
+            -   USGS_LPC_FL_SuwanneeRiver_2017_LAS_2018
 
                 -   PC (to download the Point cloud)
 

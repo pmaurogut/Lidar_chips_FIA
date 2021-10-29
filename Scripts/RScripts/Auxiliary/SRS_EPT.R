@@ -39,7 +39,7 @@ srs_USGS<-ldply(unique(index_USGS$url),function(x){
 			}
 			
 		},.progress="tk")
-write.csv(srs_USGS,"/Lidar_chips_FIA/Data/SRS_EPT_USGS.csv")
+write.csv(srs_USGS,"C:/Users/gutierrf/git/Lidar_chips_FIA/Data/SRS_EPT_USGS.csv")
 srs_NOAA<-ldply(unique(index_NOAA$url),function(x){
 			
 			a<-try({
@@ -55,4 +55,4 @@ srs_NOAA<-ldply(unique(index_NOAA$url),function(x){
 			}
 			
 		},.progress="tk")
-write.csv(srs_NOAA,"/Lidar_chips_FIA/Data/SRS_EPT_NOAA.csv")
+write.csv(srs_NOAA,"C:/Users/gutierrf/git/Lidar_chips_FIA/Data/SRS_EPT_NOAA.csv")

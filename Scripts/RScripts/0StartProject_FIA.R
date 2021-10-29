@@ -44,28 +44,6 @@ add_plot_fields<-function(x){
 	
 }
 
-#function to make FIRST CN CROSSWALK TABLE
-add_intersects_fields<-function(x){
-#	add plot fields and sets default values
-	x$index_used<-NA
-	x$downloaded_raw_tiles<-FALSE
-	x$downloaded_fom<-NA
-	x$downloaded_las_version<-NA
-	x$merged_lidar<-FALSE
-	x$projected_lidar<-FALSE
-	x$has_time_stamp<-FALSE
-	x$min_time<-NA
-	x$max_time<-NA
-	x$has_classes<-FALSE
-	x$new_classification<-FALSE
-	x$DTM_created<-FALSE
-	x$metrics_created
-	x$plot_path<-paste("STATES",x$STATECD,x$LOCATION_ID,sep="/")
-	x
-	
-}
-
-#Aux functions to prepare the folders 
 make_folders_region<-function(x,y="PLOTS_LIDAR"){
 	try({
 				dir.create(x)
@@ -74,18 +52,6 @@ make_folders_region<-function(x,y="PLOTS_LIDAR"){
 				dir.create(paste(x,y,sep="/"))
 			})
 }
-
-make_folders_project_plot<-function(x){
-	try({
-				dir.create(x)
-				dir.create(paste(x,"PC",sep="/"))
-				dir.create(paste(x,"DTM",sep="/"))
-				dir.create(paste(x,"METRICS",sep="/"))
-			})
-}
-
-#function to make FIRST CN CROSSWALK TABLE
-
 
 #GET PLOT DATA FROM FIADB
 con <- dbConnect(RSQLite::SQLite(), FIADB)

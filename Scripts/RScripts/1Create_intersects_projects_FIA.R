@@ -96,7 +96,7 @@ combinations_directories<-ddply(combinations[!combinations$state=="ALL",],c("ind
 			intersects$lidar_plot_folder<-paste(intersects$plot_path,
 					basename(dirname(intersects$url)),sep="/")
 			
-			res<-ddply(intersects,"LOCATION_ID",function(y){
+			res<-ddply(intersects,c("LOCATION_ID","id"),function(y){
 				a<-try(make_folders_project_plot(y$lidar_plot_folder))
 				y$lidar_plot_folder<-ifelse(inherits(a,"try-error"),NA,
 						y$lidar_plot_folder)
@@ -107,8 +107,10 @@ combinations_directories<-ddply(combinations[!combinations$state=="ALL",],c("ind
 			success<-try({
 						st_write(intersects_projects,x$dest_file[1], delete_layer = TRUE)		
 					})
-			res$success<-!inherits(success,"try-error")
-			res	
+			x$lidar_plots<-dim(res)[1]
+			x$lidar_plots_folder_failed<-sum(is.na(res$lidar_plot_folder))
+			x$index_updated<-!inherits(success,"try-error")
+			x	
 		},.parallel=TRUE,.paropts=list(.packages=loaded))
 stopCluster(cl)
 Sys.time()

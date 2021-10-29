@@ -59,7 +59,7 @@ combinations$dest_file<-paste(combinations$dest_folder,"/",
 
 #Sets wd in DESTFOLDER
 #Save only intersects for states
-setwd(DESTFOLDER)
+setwd(FOLDER)
 cores<-max(1,detectCores())
 cl <- makePSOCKcluster(cores,outfile="../../debug.txt")
 loaded<-.packages()
@@ -96,7 +96,7 @@ combinations_directories<-ddply(combinations[!combinations$state=="ALL",],c("ind
 			intersects$lidar_plot_folder<-paste(intersects$plot_path,
 					basename(dirname(intersects$url)),sep="/")
 			
-			res<-ddply(intersects,c("LOCATION_ID","id"),function(y){
+			res<-ddply(intersects,c("lidar_plot_folder"),function(y){
 				a<-try(make_folders_project_plot(y$lidar_plot_folder))
 				y$lidar_plot_folder<-ifelse(inherits(a,"try-error"),NA,
 						y$lidar_plot_folder)

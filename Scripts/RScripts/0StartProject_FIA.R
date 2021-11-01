@@ -26,19 +26,7 @@ SUBFOLDERS<-c("BUFFER","BBOX","INTERSECTED_INDEXES")
 #AUX FUNCTIONS TO CREATE FOLDERS AND FIELDS
 add_plot_fields<-function(x){
 #	add plot fields and sets default values
-	x$index_used<-NA
-	x$downloaded_raw_tiles<-FALSE
-	x$downloaded_fom<-NA
-	x$downloaded_las_version<-NA
-	x$merged_lidar<-FALSE
-	x$projected_lidar<-FALSE
-	x$has_time_stamp<-FALSE
-	x$min_time<-NA
-	x$max_time<-NA
-	x$has_classes<-FALSE
-	x$new_classification<-FALSE
-	x$DTM_created<-FALSE
-	x$metrics_created
+	x$folder_created<-FALSE
 	x$plot_path<-paste("STATES",x$STATECD,"PLOTS_LIDAR",x$LOCATION_ID,sep="/")
 	x
 	
@@ -71,10 +59,11 @@ rm(plotsAK)
 #statecd+unitcd+countycd+plot 
 plots$LOCATION_ID<-paste(plots$STATECD,plots$UNITCD,plots$COUNTYCD,plots$PLOT,sep="_")
 
+dir.create("F:/LIDAR_FIA",recursive=TRUE)
 make_folders_region(DESTFOLDER,"STATES")
 #Creates state folders
 states<-ldply(unique(plots$STATECD),function(x){
-			where<-paste("STATES",x,sep="/")
+			where<-paste(DESTFOLDER,"STATES",x,sep="/")
 			a<-make_folders_region(where)
 			data.frame(STATECD=x,FAILED=inherits(a,"try-error"))
 		
@@ -118,6 +107,7 @@ st_geometry(locations_bbox)<-bbox
 st_crs(locations_bbox)<-st_crs(locations)
 #rm(bbox)
 
+setwd(DESTFOLDER)
 #Creates plots folders saves bboxes for each state
 cl <- makePSOCKcluster(cores,outfile="../../debug.txt")
 loaded<-.packages()
@@ -127,10 +117,8 @@ locations_bbox2<-ddply(locations_bbox,c("STATECD"),function(x){
 			
 	outfile<-paste("STATES",x$STATECD[1],"BBOX",
 			paste("BBOX_",x$STATECD[1],".gpkg",sep=""),sep="/")
-	x$plots_state_loc<-outfile
 	x<-st_as_sf(x)
-	a<-try(st_write(x,outfile,delete_layer = TRUE))
-	x$plots_state_loc<-ifelse(inherits(a,"try-error"),NA,outfile)
+	try(st_write(x,outfile,delete_layer = TRUE))
 	
 	x<-ddply(x,"LOCATION_ID",function(y){
 		unlink(y$plot_path[1])

@@ -21,6 +21,18 @@ TYPES<-c("ENTWINEPLUS")
 add_intersects_fields<-function(x){
 #	add plot fields and sets default values
 #	FIELDS TO ADD
+	x$index_used<-NA
+	x$downloaded_raw_tiles<-FALSE
+	x$downloaded_las_version<-NA
+	x$merged_lidar<-FALSE
+	x$projected_lidar<-FALSE
+	x$has_time_stamp<-FALSE
+	x$min_time<-NA
+	x$max_time<-NA
+	x$has_classes<-FALSE
+	x$new_classification<-FALSE
+	x$DTM_created<-FALSE
+	x$metrics_created
 	x
 	
 }
@@ -52,17 +64,12 @@ combinations$dest_folder<-dirname(gsub("BBOX/","INTERSECTED_INDEXES/",combinatio
 
 
 combinations$dest_file<-paste(combinations$dest_folder,"/",
-		combinations$state,"_",
-		basename(combinations$index),sep="")
+		substr(basename(combinations$index),
+			1,nchar(basename(combinations$index))-5),
+		"_",combinations$state,".gpkg",sep="")
 
 #Sets wd in DESTFOLDER
 #Save only intersects for states
-setwd(FOLDER)
-cores<-max(1,detectCores())
-cl <- makePSOCKcluster(cores,outfile="../../debug.txt")
-loaded<-.packages()
-doParallel::registerDoParallel(cl)
-Sys.time()
 combinations<-ddply(combinations[!combinations$state=="ALL",],c("index","state"),function(x){
 			
 		plots<-st_read(x$plots[1])
@@ -73,13 +80,35 @@ combinations<-ddply(combinations[!combinations$state=="ALL",],c("index","state")
 			intersects_projects$PC_area_proj<-st_area(intersects_projects)
 			ref_area<-2000^2
 			intersects_projects$PC_prop_proj<-as.numeric(intersects_projects$PC_area_proj)/ref_area
-			st_write(intersects_projects,x$dest_file[1], delete_layer = TRUE)		
+			
+			intersects_projects$geom<-NULL
+			intersects_projects<-add_intersects_fields(intersects_projects)
+			
+			locations<-SpatialPointsDataFrame(intersects_projects[,c("LON","LAT")],
+					data=intersects_projects)
+			locations<-st_as_sf(locations)
+			st_crs(locations)<-4269
+			locations<-st_transform(locations,st_crs(DESTCRS))
+			
+			#BUFFER locations
+			buffer<-st_buffer(locations,dist=1000)
+			st_crs(buffer)<-st_crs(locations)
+		
+			#Creates bounding boxes
+			bbox_wrap <- function(x) st_as_sfc(st_bbox(x))
+			intersects_projects <- buffer
+			bbox<-purrr::map(intersects_projects$geometry,bbox_wrap)
+			bbox<-st_as_sfc(do.call(rbind,bbox))
+			intersects_projects$geometry<-NULL
+			st_geometry(intersects_projects)<-bbox
+			st_crs(intersects_projects)<-st_crs(intersects_projects)
+			
+			st_write(intersects_projects,x$dest_file[1], delete_layer = TRUE)
+
 				})
 		x$success<-!inherits(success,"try-error")
 		x	
-		},.parallel=TRUE,.paropts=list(.packages=loaded))
-stopCluster(cl)
-Sys.time()
+		})
 
 #Sets wd in DESTFOLDER
 #Create plot lidar directories and add field for 

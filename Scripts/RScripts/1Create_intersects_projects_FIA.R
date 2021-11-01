@@ -111,6 +111,7 @@ combinations<-ddply(combinations[!combinations$state=="ALL",],c("index","state")
 		})
 
 #Sets wd in DESTFOLDER
+setwd(FOLDER)
 #Create plot lidar directories and add field for 
 cores<-max(1,detectCores())
 cl <- makePSOCKcluster(cores,outfile="../../debug.txt")
@@ -119,6 +120,9 @@ doParallel::registerDoParallel(cl)
 Sys.time()
 combinations_directories<-ddply(combinations[!combinations$state=="ALL",],c("index","state"),function(x){
 			
+			if(!x$success){
+				return(x)
+			}
 			intersects<-st_read(x$dest_file[1])
 			intersects$lidar_plot_folder<-paste(intersects$plot_path,
 					basename(dirname(intersects$url)),sep="/")
@@ -142,5 +146,5 @@ combinations_directories<-ddply(combinations[!combinations$state=="ALL",],c("ind
 stopCluster(cl)
 Sys.time()
 
-save(combinations,combinations_directories,file="STATES/Intersects_states.Rdata")
+save(combinations,combinations_directories,file="F:/LIDAR_FIA/PLOTSFOLDER/STATES/Intersects_states.Rdata")
 

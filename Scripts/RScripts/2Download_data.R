@@ -9,17 +9,6 @@ library("sp")
 library("rgdal")
 library("sf")
 library("jsonlite")
-
-#Destination folder
-# TODO: Add comment
-# 
-# Author: gutierrf
-###############################################################################
-library("plyr")
-library("purrr")
-library("sp")
-library("rgdal")
-library("sf")
 library("doParallel")
 
 

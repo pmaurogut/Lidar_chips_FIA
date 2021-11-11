@@ -10,6 +10,7 @@ library("sf")
 library("rgeos")
 library("RSQLite")
 library("doParallel")
+library("USGSlidar")
 
 
 #DESTCRS everything in webmercator for now
@@ -35,6 +36,7 @@ add_plot_fields<-function(x){
 make_folders_region<-function(x,y="PLOTS_LIDAR"){
 	try({
 				dir.create(x)
+				dir.create(paste(x,"BUFFER",sep="/"))
 				dir.create(paste(x,"BBOX",sep="/"))
 				dir.create(paste(x,"INTERSECTED_INDEXES",sep="/"))
 				dir.create(paste(x,y,sep="/"))
@@ -58,7 +60,7 @@ rm(plotsAK)
 #CREATES UNIQUE LOCATION ID WITH STATECD, UNITCD, COUNTYCD and PLOT
 #statecd+unitcd+countycd+plot 
 plots$LOCATION_ID<-paste(plots$STATECD,plots$UNITCD,plots$COUNTYCD,plots$PLOT,sep="_")
-
+unlink("F:/LIDAR_FIA",recursive=TRUE)
 dir.create("F:/LIDAR_FIA",recursive=TRUE)
 make_folders_region(DESTFOLDER,"STATES")
 #Creates state folders
@@ -92,10 +94,11 @@ locations<-SpatialPointsDataFrame(locations[,c("LON","LAT")],data=locations)
 locations<-st_as_sf(locations)
 st_crs(locations)<-4269
 locations<-st_transform(locations,st_crs(DESTCRS))
-
+locations$computed_buffer<-computeClipBufferForCONUS(BUFFERDIST, points=locations)
 #BUFFER locations
-locations_buffer<-st_buffer(locations,dist=BUFFERDIST)
+locations_buffer<-st_buffer(locations,dist=locations$computed_buffer)
 st_crs(locations_buffer)<-st_crs(locations)
+locations_buffer$geom_area<-st_area(locations_buffer)
 
 #Creates bounding boxes
 bbox_wrap <- function(x) st_as_sfc(st_bbox(x))
@@ -105,6 +108,7 @@ bbox<-st_as_sfc(do.call(rbind,bbox))
 locations_bbox$geometry<-NULL
 st_geometry(locations_bbox)<-bbox
 st_crs(locations_bbox)<-st_crs(locations)
+locations_bbox$geom_area<-st_area(locations_bbox)
 #rm(bbox)
 
 setwd(DESTFOLDER)

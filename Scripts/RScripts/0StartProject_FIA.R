@@ -59,7 +59,8 @@ rm(plotsAK)
 
 #CREATES UNIQUE LOCATION ID WITH STATECD, UNITCD, COUNTYCD and PLOT
 #statecd+unitcd+countycd+plot 
-plots$LOCATION_ID<-paste(plots$STATECD,plots$UNITCD,plots$COUNTYCD,plots$PLOT,sep="_")
+plots$LOCATION_ID<-paste(plots$STATECD,plots$UNITCD,
+		plots$COUNTYCD,plots$PLOT,sep="_")
 unlink("F:/LIDAR_FIA",recursive=TRUE)
 dir.create("F:/LIDAR_FIA",recursive=TRUE)
 make_folders_region(DESTFOLDER,"STATES")
@@ -94,7 +95,7 @@ locations<-SpatialPointsDataFrame(locations[,c("LON","LAT")],data=locations)
 locations<-st_as_sf(locations)
 st_crs(locations)<-4269
 locations<-st_transform(locations,st_crs(DESTCRS))
-locations$computed_buffer<-computeClipBufferForCONUS(BUFFERDIST, points=locations)
+locations$computed_buffer<-computeClipBufferForCONUS(BUFFERDIST/2, points=locations)
 #BUFFER locations
 locations_buffer<-st_buffer(locations,dist=locations$computed_buffer)
 st_crs(locations_buffer)<-st_crs(locations)
